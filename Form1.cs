@@ -1,3 +1,5 @@
+using System.Reflection;
+
 using NAudio.Wave;
 
 namespace RokitRoker
@@ -53,7 +55,10 @@ namespace RokitRoker
 
 		async void Form1_LoadAsync(object sender, EventArgs e)
 		{
+			this.Text = "RokitRoker " + Assembly.GetEntryAssembly().GetName().Version;
 			WindowState = FormWindowState.Minimized;
+			// this removes it from Alt-Tab when in tray
+			Hide();
 
 
 			FormBorderStyle = FormBorderStyle.FixedSingle;

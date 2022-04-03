@@ -62,14 +62,14 @@
 			this.label1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
 			this.label1.Location = new System.Drawing.Point(31, 37);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(290, 65);
+			this.label1.Size = new System.Drawing.Size(277, 65);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "Rokit Roker";
+			this.label1.Text = "RokitRoker";
 			// 
 			// notifyIcon1
 			// 
 			this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-			this.notifyIcon1.Text = "notifyIcon1";
+			this.notifyIcon1.Text = "RokitRoker";
 			this.notifyIcon1.Visible = true;
 			this.notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);
 			// 
@@ -86,7 +86,7 @@
 			this.MinimumSize = new System.Drawing.Size(585, 344);
 			this.Name = "Form1";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Rokit Roker";
+			this.Text = "RokitRoker";
 			this.Load += new System.EventHandler(this.Form1_LoadAsync);
 			this.Resize += new System.EventHandler(this.Form1_Resize);
 			this.ResumeLayout(false);
