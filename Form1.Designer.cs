@@ -54,7 +54,7 @@
 			// btnExit
 			// 
 			this.btnExit.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-			this.btnExit.Location = new System.Drawing.Point(284, 262);
+			this.btnExit.Location = new System.Drawing.Point(313, 262);
 			this.btnExit.Name = "btnExit";
 			this.btnExit.Size = new System.Drawing.Size(185, 76);
 			this.btnExit.TabIndex = 1;
@@ -112,7 +112,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(511, 374);
+			this.ClientSize = new System.Drawing.Size(544, 374);
 			this.Controls.Add(this.lblNextIgnition);
 			this.Controls.Add(this.lblNextIgnitionLabel);
 			this.Controls.Add(this.pictureBox1);
