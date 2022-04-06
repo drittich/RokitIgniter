@@ -1,22 +1,64 @@
+using System;
 using System.Reflection;
+using System.Threading;
 
 using NAudio.Wave;
 
-namespace RokitRoker
+namespace RokitIgniter
 {
 	public partial class Form1 : Form
 	{
-		WaveOutEvent outputDevice;
-		AudioFileReader audioFile;
+		WaveOutEvent? outputDevice;
+		AudioFileReader? audioFile;
+		CancellationTokenSource _cts;
+		Task _timerTask;
+		TimeSpan interval = TimeSpan.FromSeconds(10);
 
 		public Form1()
 		{
 			InitializeComponent();
 		}
 
-		void btnPlay_Click(object sender, EventArgs e)
+		void Form1_Load(object sender, EventArgs e)
 		{
-			PlaySound();
+			Text = "Rokit Igniter " + Assembly.GetEntryAssembly()?.GetName().Version ?? string.Empty;
+			WindowState = FormWindowState.Minimized;
+			// this removes it from Alt-Tab when in tray
+			Hide();
+
+			FormBorderStyle = FormBorderStyle.FixedSingle;
+			MaximizeBox = false;
+
+			_timerTask = DoStart(interval, lblNextIgnition);
+		}
+
+		async Task DoStart(TimeSpan interval, Label lbl)
+		{
+			_cts = new();
+			try
+			{
+				using var timer = new PeriodicTimer(interval);
+				do
+				{
+					lbl.Text = DateTime.Now.Add(interval).ToString("h:mm:ss tt");
+					PlaySound();
+				}
+				while (await timer.WaitForNextTickAsync(_cts.Token));
+			}
+			catch (OperationCanceledException)
+			{
+			}
+		}
+
+		async void BtnIgnite_Click(object sender, EventArgs e)
+		{
+			_cts.Cancel();
+
+			await _timerTask;
+
+			_cts.Dispose();
+
+			_timerTask = DoStart(interval, lblNextIgnition);
 		}
 
 		void PlaySound()
@@ -36,10 +78,10 @@ namespace RokitRoker
 
 		void OnPlaybackStopped(object sender, StoppedEventArgs args)
 		{
-			Cleanup();
+			CleanupAudioRefs();
 		}
 
-		void Cleanup()
+		void CleanupAudioRefs()
 		{
 			if (outputDevice != null)
 			{
@@ -53,33 +95,18 @@ namespace RokitRoker
 			}
 		}
 
-		async void Form1_LoadAsync(object sender, EventArgs e)
+		async void BtnExit_Click(object sender, EventArgs e)
 		{
-			this.Text = "RokitRoker " + Assembly.GetEntryAssembly().GetName().Version;
-			WindowState = FormWindowState.Minimized;
-			// this removes it from Alt-Tab when in tray
-			Hide();
+			_cts.Cancel();
+			await _timerTask;
+			_cts.Dispose();
 
+			CleanupAudioRefs();
 
-			FormBorderStyle = FormBorderStyle.FixedSingle;
-			MaximizeBox = false;
-
-			PlaySound();
-
-			var timer = new PeriodicTimer(TimeSpan.FromMinutes(25));
-			while (await timer.WaitForNextTickAsync())
-			{
-				PlaySound();
-			}
-		}
-
-		void btnExit_Click(object sender, EventArgs e)
-		{
-			Cleanup();
 			Environment.Exit(0);	
 		}
 
-		void notifyIcon1_Click(object sender, EventArgs e)
+		void NotifyIcon1_Click(object sender, EventArgs e)
 		{
 			WindowState = FormWindowState.Normal;
 			notifyIcon1.Visible = false;

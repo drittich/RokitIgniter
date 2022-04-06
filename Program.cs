@@ -1,4 +1,4 @@
-namespace RokitRoker
+namespace RokitIgniter
 {
 	internal static class Program
 	{

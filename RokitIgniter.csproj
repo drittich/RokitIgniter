@@ -2,18 +2,18 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
-		<VersionPrefix>0.1.1</VersionPrefix>
+		<VersionPrefix>0.1.2</VersionPrefix>
 		<VersionSuffix>$([System.DateTime]::UtcNow.ToString(`yyyyMMdd-HHmm`))</VersionSuffix>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<ApplicationIcon>RokitRoker.ico</ApplicationIcon>
+		<ApplicationIcon>RokitIgniter.ico</ApplicationIcon>
 		<DebugType>none</DebugType>
-		<PackageIcon>RokitRoker.ico</PackageIcon>
+		<PackageIcon>RokitIgniter.ico</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="RokitRoker.ico" />
+		<Content Include="RokitIgniter.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -21,10 +21,25 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="10Hz.wav">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="RokitRoker.ico">
+		<None Update="RokitIgniter.ico">
 		  <Pack>True</Pack>
 		  <PackagePath>\</PackagePath>
 		</None>
