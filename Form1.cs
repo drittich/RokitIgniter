@@ -12,7 +12,7 @@ namespace RokitIgniter
 		AudioFileReader? audioFile;
 		CancellationTokenSource _cts;
 		Task _timerTask;
-		TimeSpan interval = TimeSpan.FromSeconds(10);
+		TimeSpan interval = TimeSpan.FromMinutes(25);
 
 		public Form1()
 		{
