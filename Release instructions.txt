@@ -1,0 +1,7 @@
+After committing the new code changes:
+
+- edit .csproj and update `VersionPrefix` and `AssemblyVersion`
+- Commit and push
+- Create new release in GitHub in draft mode and create new tag
+- Run e.g., "publish.bat v0.1.3" (no dash) and attach binaries to release 
+- Publish release

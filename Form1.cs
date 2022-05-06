@@ -10,9 +10,9 @@ namespace RokitIgniter
 	{
 		WaveOutEvent? outputDevice;
 		AudioFileReader? audioFile;
-		CancellationTokenSource _cts;
-		Task _timerTask;
-		TimeSpan interval = TimeSpan.FromMinutes(25);
+		CancellationTokenSource? _cts;
+		Task? _timerTask;
+		readonly TimeSpan interval = TimeSpan.FromMinutes(25);
 
 		public Form1()
 		{
@@ -21,7 +21,8 @@ namespace RokitIgniter
 
 		void Form1_Load(object sender, EventArgs e)
 		{
-			Text = "Rokit Igniter " + Assembly.GetEntryAssembly()?.GetName().Version ?? string.Empty;
+			var versionString = string.Join(".", Assembly.GetEntryAssembly()?.GetName().Version!.ToString().Split(".").SkipLast(1)!);
+			Text = "Rokit Igniter " + versionString;
 			WindowState = FormWindowState.Minimized;
 			// this removes it from Alt-Tab when in tray
 			Hide();
@@ -52,11 +53,12 @@ namespace RokitIgniter
 
 		async void BtnIgnite_Click(object sender, EventArgs e)
 		{
-			_cts.Cancel();
-
-			await _timerTask;
-
-			_cts.Dispose();
+			if (_cts is not null)
+			{
+				_cts.Cancel();
+				await _timerTask!;
+				_cts.Dispose();
+			}
 
 			_timerTask = DoStart(interval, lblNextIgnition);
 		}
@@ -66,7 +68,7 @@ namespace RokitIgniter
 			if (outputDevice == null)
 			{
 				outputDevice = new WaveOutEvent();
-				outputDevice.PlaybackStopped += OnPlaybackStopped;
+				outputDevice.PlaybackStopped += OnPlaybackStopped!;
 			}
 			if (audioFile == null)
 			{
@@ -97,13 +99,16 @@ namespace RokitIgniter
 
 		async void BtnExit_Click(object sender, EventArgs e)
 		{
-			_cts.Cancel();
-			await _timerTask;
-			_cts.Dispose();
+			if (_cts is not null)
+			{
+				_cts.Cancel();
+				await _timerTask!;
+				_cts.Dispose();
+			}
 
 			CleanupAudioRefs();
 
-			Environment.Exit(0);	
+			Environment.Exit(0);
 		}
 
 		void NotifyIcon1_Click(object sender, EventArgs e)

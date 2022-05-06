@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
-		<VersionPrefix>0.1.2</VersionPrefix>
+		<VersionPrefix>0.1.3</VersionPrefix>
 		<VersionSuffix>$([System.DateTime]::UtcNow.ToString(`yyyyMMdd-HHmm`))</VersionSuffix>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -10,6 +10,7 @@
 		<ApplicationIcon>RokitIgniter.ico</ApplicationIcon>
 		<DebugType>none</DebugType>
 		<PackageIcon>RokitIgniter.ico</PackageIcon>
+		<AssemblyVersion>0.1.3</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
