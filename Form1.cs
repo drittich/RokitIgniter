@@ -1,15 +1,10 @@
-using System;
+using System.Media;
 using System.Reflection;
-using System.Threading;
-
-using NAudio.Wave;
 
 namespace RokitIgniter
 {
 	public partial class Form1 : Form
 	{
-		WaveOutEvent? outputDevice;
-		AudioFileReader? audioFile;
 		CancellationTokenSource? _cts;
 		Task? _timerTask;
 		readonly TimeSpan interval = TimeSpan.FromMinutes(25);
@@ -65,36 +60,8 @@ namespace RokitIgniter
 
 		void PlaySound()
 		{
-			if (outputDevice == null)
-			{
-				outputDevice = new WaveOutEvent();
-				outputDevice.PlaybackStopped += OnPlaybackStopped!;
-			}
-			if (audioFile == null)
-			{
-				audioFile = new AudioFileReader(Path.Combine(Environment.CurrentDirectory, "10Hz.wav"));
-				outputDevice.Init(audioFile);
-			}
-			outputDevice.Play();
-		}
-
-		void OnPlaybackStopped(object sender, StoppedEventArgs args)
-		{
-			CleanupAudioRefs();
-		}
-
-		void CleanupAudioRefs()
-		{
-			if (outputDevice != null)
-			{
-				outputDevice.Dispose();
-				outputDevice = null;
-			}
-			if (audioFile != null)
-			{
-				audioFile.Dispose();
-				audioFile = null;
-			}
+			using (SoundPlayer player = new SoundPlayer(Path.Combine(Environment.CurrentDirectory, "10Hz.wav")))
+				player.Play();
 		}
 
 		async void BtnExit_Click(object sender, EventArgs e)
@@ -105,8 +72,6 @@ namespace RokitIgniter
 				await _timerTask!;
 				_cts.Dispose();
 			}
-
-			CleanupAudioRefs();
 
 			Environment.Exit(0);
 		}
@@ -135,4 +100,5 @@ namespace RokitIgniter
 			}
 		}
 	}
+	
 }
