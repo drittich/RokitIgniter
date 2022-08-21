@@ -16,8 +16,9 @@ namespace RokitIgniter
 
 		void Form1_Load(object sender, EventArgs e)
 		{
+			var isBeta = true;
 			var versionString = string.Join(".", Assembly.GetEntryAssembly()?.GetName().Version!.ToString().Split(".").SkipLast(1)!);
-			Text = "Rokit Igniter " + versionString;
+			Text = "Rokit Igniter " + versionString + (isBeta ? "b" : "");
 			WindowState = FormWindowState.Minimized;
 			// this removes it from Alt-Tab when in tray
 			Hide();
