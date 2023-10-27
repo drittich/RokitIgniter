@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
-		<VersionPrefix>0.1.4</VersionPrefix>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<VersionPrefix>0.1.5</VersionPrefix>
 		<VersionSuffix>$([System.DateTime]::UtcNow.ToString(`yyyyMMdd-HHmm`))</VersionSuffix>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -10,11 +10,13 @@
 		<ApplicationIcon>RokitIgniter.ico</ApplicationIcon>
 		<DebugType>none</DebugType>
 		<PackageIcon>RokitIgniter.ico</PackageIcon>
-		<AssemblyVersion>0.1.4</AssemblyVersion>
+		<AssemblyVersion>0.1.5</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="RokitIgniter.ico" />
+		<Content Include="RokitIgniter.ico">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
