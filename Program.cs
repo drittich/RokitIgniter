@@ -8,6 +8,14 @@ namespace RokitIgniter
 		[STAThread]
 		static void Main()
 		{
+			//make sure only one instance of the application can be running at the same time
+			using var mutex = new Mutex(false, "RokitIgniter");
+			if (!mutex.WaitOne(0, false))
+			{
+				MessageBox.Show("RokitIgniter is already running.", "RokitIgniter", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+
 			// To customize application configuration such as set high DPI settings or default font,
 			// see https://aka.ms/applicationconfiguration.
 			Application.SetHighDpiMode(HighDpiMode.SystemAware);
@@ -27,6 +35,7 @@ namespace RokitIgniter
 			{
 				notifyIcon = new();
 				igniter = new();
+
 				SetupNotifyIcon();
 			}
 
@@ -52,11 +61,6 @@ namespace RokitIgniter
 				notifyIcon.Visible = true;
 			}
 
-			private void ExitApplication_Click(object? sender, EventArgs e)
-			{
-				Environment.Exit(0);
-			}
-
 			async Task Ignite_ClickAsync(object? sender, EventArgs? e)
 			{
 				await igniter!.IgniteAsync();
@@ -66,6 +70,11 @@ namespace RokitIgniter
 			{
 				var packageVersion = typeof(Program).Assembly.GetName().Version;
 				MessageBox.Show($"RokitIgniter v{packageVersion}", "RokitIgniter", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+
+			private void ExitApplication_Click(object? sender, EventArgs e)
+			{
+				Environment.Exit(0);
 			}
 		}
 	}

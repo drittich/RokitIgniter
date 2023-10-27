@@ -25,9 +25,7 @@ namespace RokitIgniter
 				}
 				while (await timer.WaitForNextTickAsync(_cts.Token));
 			}
-			catch (OperationCanceledException)
-			{
-			}
+			catch (OperationCanceledException) { }
 		}
 
 		void PlaySound()
