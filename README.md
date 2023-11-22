@@ -1,5 +1,5 @@
 # RokitIgniter
-A Windows tray utility for keeping Rokit powered speakers from going to sleep.
+A Windows tray utility for keeping KRK Rokit powered speakers from going to sleep.
 
 Many KRK Rokit speakers go to sleep after 30 minutes, and you need to send a fairly strong signal to wake them up again. This is a utility to help keep the speakers active.
 
