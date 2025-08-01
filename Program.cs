@@ -47,20 +47,11 @@ internal static class Program
 			{
 				Items =
 				{
-					new ToolStripMenuItem("Restart", null, async (_, _) => await _tuneGenerator.Restart()),
+					new ToolStripMenuItem("Play", null, (_, _) => _tuneGenerator.Play()),
+					new ToolStripMenuItem("Stop", null, (_, _) => _tuneGenerator.Stop()),
 					new ToolStripMenuItem("Exit", null, ExitApplication_Click)
 
 				}
-			};
-
-			_notifyIcon.Click += async (_, e) =>
-			{
-				if (e is MouseEventArgs { Button: MouseButtons.Right })
-				{
-					return;
-				}
-
-				await _tuneGenerator.Restart();
 			};
 
 			_notifyIcon.Visible = true;

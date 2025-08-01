@@ -1,60 +1,40 @@
-﻿using System.Media;
+﻿using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace TuneGenerator;
 
 public class TuneGenerator : IDisposable
 {
-	private CancellationTokenSource? _cts;
-	private Task? _timerTask;
-	private readonly TimeSpan _interval = TimeSpan.FromSeconds(11);
+	private readonly WaveOutEvent? _waveOutEvent;
 
 	public TuneGenerator()
 	{
-		_timerTask = DoStart(_interval);
+		var signalGenerator = new SignalGenerator
+		{ 
+			Gain = 0.2, 
+			Frequency = 5,
+			Type = SignalGeneratorType.Sin
+		};
+		_waveOutEvent = new WaveOutEvent();
+		_waveOutEvent.Init(signalGenerator);
 	}
 
-	private async Task DoStart(TimeSpan interval)
+	public void Play()
 	{
-		_cts = new CancellationTokenSource();
-		try
-		{
-			using var timer = new PeriodicTimer(interval);
-			do
-			{
-				PlaySound();
-			} while (await timer.WaitForNextTickAsync(_cts.Token));
-		}
-		catch (OperationCanceledException)
-		{
-			// ignored
-		}
+		_waveOutEvent?.Play();
 	}
 
-	private static void PlaySound()
+	public void Stop()
 	{
-		using var player = new SoundPlayer(Path.Combine(Environment.CurrentDirectory, "1Hz.wav"));
-		player.Play();
-	}
-
-	public async Task Restart()
-	{
-		if (_cts is not null)
-		{
-			await _cts.CancelAsync();
-			await _timerTask!;
-			_cts.Dispose();
-		}
-
-		_timerTask = DoStart(_interval);
+		_waveOutEvent?.Stop();
 	}
 
 	public void Dispose()
 	{
-		if (_cts is not null)
+		if (_waveOutEvent is not null)
 		{
-			_cts.Cancel();
-			_timerTask!.Wait();
-			_cts.Dispose();
+			_waveOutEvent.Stop();
+			_waveOutEvent.Dispose();
 		}
 		GC.SuppressFinalize(this);
 	}

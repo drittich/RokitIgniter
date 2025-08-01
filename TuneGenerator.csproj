@@ -14,9 +14,6 @@
 		<Content Include="TuneGenerator.ico">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="1Hz.wav">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -28,6 +25,10 @@
 
 	<ItemGroup>
 	  <Folder Include="Properties\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="NAudio" Version="2.2.1" />
 	</ItemGroup>
 
 </Project>
