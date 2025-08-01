@@ -1,81 +1,74 @@
-namespace RokitIgniter
+namespace TuneGenerator;
+
+internal static class Program
 {
-	internal static class Program
+	/// <summary>
+	/// The main entry point for the application.
+	/// </summary>
+	[STAThread]
+	private static void Main()
 	{
-		/// <summary>
-		///  The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		static void Main()
+		//make sure only one instance of the application can be running at the same time
+		using var mutex = new Mutex(false, "TuneGenerator");
+		if (!mutex.WaitOne(0, false))
 		{
-			//make sure only one instance of the application can be running at the same time
-			using var mutex = new Mutex(false, "RokitIgniter");
-			if (!mutex.WaitOne(0, false))
-			{
-				MessageBox.Show("RokitIgniter is already running.", "RokitIgniter", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				return;
-			}
-
-			// To customize application configuration such as set high DPI settings or default font,
-			// see https://aka.ms/applicationconfiguration.
-			Application.SetHighDpiMode(HighDpiMode.SystemAware);
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-
-			// we don't need a form, so we can just run the ApplicationContext directly
-			Application.Run(new MyCustomApplicationContext());
+			MessageBox.Show("TuneGenerator is already running.", "TuneGenerator", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			return;
 		}
 
-		public class MyCustomApplicationContext : ApplicationContext
+		// To customize application configuration such as set high DPI settings or default font,
+		// see https://aka.ms/applicationconfiguration.
+		Application.SetHighDpiMode(HighDpiMode.SystemAware);
+		Application.EnableVisualStyles();
+		Application.SetCompatibleTextRenderingDefault(false);
+
+		// we don't need a form, so we can just run the ApplicationContext directly
+		Application.Run(new TuneGeneratorAppContext());
+	}
+
+	private class TuneGeneratorAppContext : ApplicationContext
+	{
+		private readonly NotifyIcon _notifyIcon;
+		private readonly TuneGenerator _tuneGenerator;
+
+		public TuneGeneratorAppContext()
 		{
-			private NotifyIcon notifyIcon;
-			private Igniter igniter;
+			_notifyIcon = new NotifyIcon();
+			_tuneGenerator = new TuneGenerator();
 
-			public MyCustomApplicationContext()
+			SetupNotifyIcon();
+		}
+
+		private void SetupNotifyIcon()
+		{
+			_notifyIcon.Text = "TuneGenerator";
+			_notifyIcon.Icon = new Icon("TuneGenerator.ico");
+			_notifyIcon.ContextMenuStrip = new ContextMenuStrip
 			{
-				notifyIcon = new();
-				igniter = new();
-
-				SetupNotifyIcon();
-			}
-
-			private void SetupNotifyIcon()
-			{
-				notifyIcon!.Text = "Rokit Igniter";
-				notifyIcon.Icon = new("RokitIgniter.ico");
-				notifyIcon.ContextMenuStrip = new();
-				notifyIcon.ContextMenuStrip.Items.Add("Ignite", null, async (s, e) => await Ignite_ClickAsync(s, e));
-				notifyIcon.ContextMenuStrip.Items.Add("About", null, ShowAboutMessageBox_Click);
-				notifyIcon.ContextMenuStrip.Items.Add("Exit", null, ExitApplication_Click);
-
-				notifyIcon!.Click += async (s, e) =>
+				Items =
 				{
-					if (e is MouseEventArgs me && me.Button == MouseButtons.Right)
-					{
-						return;
-					}
+					new ToolStripMenuItem("Restart", null, async (_, _) => await _tuneGenerator.Restart()),
+					new ToolStripMenuItem("Exit", null, ExitApplication_Click)
 
-					await igniter.IgniteAsync();
-				};
+				}
+			};
 
-				notifyIcon.Visible = true;
-			}
-
-			async Task Ignite_ClickAsync(object? sender, EventArgs? e)
+			_notifyIcon.Click += async (_, e) =>
 			{
-				await igniter!.IgniteAsync();
-			}
+				if (e is MouseEventArgs { Button: MouseButtons.Right })
+				{
+					return;
+				}
 
-			void ShowAboutMessageBox_Click(object? sender, EventArgs? e)
-			{
-				var packageVersion = typeof(Program).Assembly.GetName().Version;
-				MessageBox.Show($"RokitIgniter v{packageVersion}", "RokitIgniter", MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
+				await _tuneGenerator.Restart();
+			};
 
-			private void ExitApplication_Click(object? sender, EventArgs e)
-			{
-				Environment.Exit(0);
-			}
+			_notifyIcon.Visible = true;
+		}
+
+		private static void ExitApplication_Click(object? sender, EventArgs e)
+		{
+			Environment.Exit(0);
 		}
 	}
 }
