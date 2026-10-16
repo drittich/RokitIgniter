@@ -3,5 +3,23 @@ After committing the new code changes:
 - edit .csproj and update `VersionPrefix` and `AssemblyVersion`
 - Commit and push
 - Create new release in GitHub in draft mode and create new tag
-- Run e.g., "publish.bat v0.1.3" (no dash) and attach binaries to release 
+- On Fedora, run e.g., "./publish.sh v0.2.0" (no dash). It needs the .NET 10 SDK and 7z (`sudo dnf install 7zip`).
+  It produces four archives in bin/Publish:
+    - RokitIgniter-v0.2.0.7z (Windows, framework-dependent)
+    - RokitIgniter-SelfContained-v0.2.0.7z (Windows, self-contained)
+    - RokitIgniter-linux-x64-v0.2.0.tar.gz (Linux, framework-dependent)
+    - RokitIgniter-SelfContained-linux-x64-v0.2.0.tar.gz (Linux, self-contained)
+  (On Windows, "publish.bat v0.2.0" builds only the two Windows archives, RokitIgniter-v0.2.0.7z and
+  RokitIgniter-SelfContained-v0.2.0.7z, in bin\Publish. It needs the .NET 10 SDK and 7-Zip in
+  C:\Program Files\7-Zip. The Linux archives come from publish.sh only.)
+- Attach all four archives to the release
+- Before publishing, do the manual smoke checklist on Fedora 44 KDE (Wayland session) and on Windows:
+    - The tray icon appears with its tooltip
+    - A left-click plays the wake tone (check the speaker LED, or `pw-top` on Fedora)
+    - The Ignite, About and Exit menu items work
+    - A second start shows "RokitIgniter is already running." and exits
+    - Fedora: install.sh, then a start from the application launcher (with its icon), install.sh --autostart and a
+      start after logging in again, then uninstall.sh removes it all
+    - Fedora: the self-contained build starts without the .NET runtime; the framework-dependent build starts with
+      dotnet-runtime-10.0
 - Publish release

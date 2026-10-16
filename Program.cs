@@ -1,81 +1,48 @@
+using Avalonia;
+
 namespace RokitIgniter
 {
+	/// <summary>
+	/// The composition root: the only place that picks adapters for the current OS.
+	/// </summary>
 	internal static class Program
 	{
 		/// <summary>
 		///  The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main()
+		static int Main(string[] args)
 		{
-			//make sure only one instance of the application can be running at the same time
-			using var mutex = new Mutex(false, "RokitIgniter");
-			if (!mutex.WaitOne(0, false))
+			// make sure only one instance of the application can be running at the same time: per session on Windows, as
+			// before the port; across sessions on Linux, where each shell is its own session
+			using var guard = new SingleInstanceGuard(currentSessionOnly: OperatingSystem.IsWindows());
+			if (!guard.IsFirstInstance)
+				return StartApp(args, () => new App { IconFileName = IconFileName() });
+
+			var tonePlayer = CreateTonePlayer();
+			if (tonePlayer is null)
 			{
-				MessageBox.Show("RokitIgniter is already running.", "RokitIgniter", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				return;
+				Console.Error.WriteLine("RokitIgniter: no audio player found. Install pipewire-utils (pw-play), pulseaudio-utils (paplay) or alsa-utils (aplay).");
+				return 1;
 			}
 
-			// To customize application configuration such as set high DPI settings or default font,
-			// see https://aka.ms/applicationconfiguration.
-			Application.SetHighDpiMode(HighDpiMode.SystemAware);
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-
-			// we don't need a form, so we can just run the ApplicationContext directly
-			Application.Run(new MyCustomApplicationContext());
+			var igniter = new Igniter(tonePlayer, TimeProvider.System);
+			return StartApp(args, () => new App { Igniter = igniter, IconFileName = IconFileName() });
 		}
 
-		public class MyCustomApplicationContext : ApplicationContext
+		static ITonePlayer? CreateTonePlayer()
 		{
-			private NotifyIcon notifyIcon;
-			private Igniter igniter;
-
-			public MyCustomApplicationContext()
-			{
-				notifyIcon = new();
-				igniter = new();
-
-				SetupNotifyIcon();
-			}
-
-			private void SetupNotifyIcon()
-			{
-				notifyIcon!.Text = "Rokit Igniter";
-				notifyIcon.Icon = new("RokitIgniter.ico");
-				notifyIcon.ContextMenuStrip = new();
-				notifyIcon.ContextMenuStrip.Items.Add("Ignite", null, async (s, e) => await Ignite_ClickAsync(s, e));
-				notifyIcon.ContextMenuStrip.Items.Add("About", null, ShowAboutMessageBox_Click);
-				notifyIcon.ContextMenuStrip.Items.Add("Exit", null, ExitApplication_Click);
-
-				notifyIcon!.Click += async (s, e) =>
-				{
-					if (e is MouseEventArgs me && me.Button == MouseButtons.Right)
-					{
-						return;
-					}
-
-					await igniter.IgniteAsync();
-				};
-
-				notifyIcon.Visible = true;
-			}
-
-			async Task Ignite_ClickAsync(object? sender, EventArgs? e)
-			{
-				await igniter!.IgniteAsync();
-			}
-
-			void ShowAboutMessageBox_Click(object? sender, EventArgs? e)
-			{
-				var packageVersion = typeof(Program).Assembly.GetName().Version;
-				MessageBox.Show($"RokitIgniter v{packageVersion}", "RokitIgniter", MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
-
-			private void ExitApplication_Click(object? sender, EventArgs e)
-			{
-				Environment.Exit(0);
-			}
+			if (OperatingSystem.IsWindows())
+				return new WindowsTonePlayer();
+			return LinuxTonePlayer.FindOnPath();
 		}
+
+		static string IconFileName() => OperatingSystem.IsWindows() ? "RokitIgniter.ico" : "RokitIgniter.png";
+
+		static int StartApp(string[] args, Func<App> createApp) =>
+			AppBuilder.Configure(createApp)
+				.UsePlatformDetect()
+				.LogToTrace()
+				.StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnExplicitShutdown);
 	}
 }

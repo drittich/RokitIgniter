@@ -11,7 +11,7 @@ cd %PROJECT_PATH%
 
 ::regular
 echo publishing regular version...
-dotnet publish --nologo -r win-x64 -c Release --self-contained false -p:PublishSingleFile=true -o %PUBLISH_PATH%\TEMP
+dotnet publish %APP_NAME%.csproj --nologo -r win-x64 -c Release --self-contained false -p:PublishSingleFile=true -o %PUBLISH_PATH%\TEMP
 
 cd %PUBLISH_PATH%\TEMP
 %ZIP_EXE_PATH% a -t7z -r -mx9 ..\%APP_NAME%%EXE_VERSION%.7z *.*
@@ -20,7 +20,7 @@ del /f/s/q %PUBLISH_PATH%\TEMP > nul & rmdir /s/q %PUBLISH_PATH%\TEMP
 
 :: regular self-contained
 echo publishing regular self-contained version...
-dotnet publish --nologo -r win-x64 -c Release --self-contained true -p:PublishSingleFile=true -o %PUBLISH_PATH%\TEMP
+dotnet publish %APP_NAME%.csproj --nologo -r win-x64 -c Release --self-contained true -p:PublishSingleFile=true -o %PUBLISH_PATH%\TEMP
 
 cd %PUBLISH_PATH%\TEMP
 %ZIP_EXE_PATH% a -t7z -r -mx9 ..\%APP_NAME%-SelfContained%EXE_VERSION%.7z *.*

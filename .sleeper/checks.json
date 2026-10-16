@@ -1,0 +1,7 @@
+{
+  "checks": [
+    {"name": "build", "command": "dotnet build RokitIgniter.sln --nologo"},
+    {"name": "test", "command": "dotnet test RokitIgniter.Tests --nologo"},
+    {"name": "shell-syntax", "command": "for f in $(git ls-files '*.sh'); do bash -n \"$f\" || exit 1; done"}
+  ]
+}

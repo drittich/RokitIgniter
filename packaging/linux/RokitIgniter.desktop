@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=RokitIgniter
+Comment=Keeps KRK Rokit speakers awake with an inaudible wake tone
+Exec=RokitIgniter
+Icon=RokitIgniter
+Terminal=false
+Categories=AudioVideo;Audio;Utility;
+StartupNotify=false
